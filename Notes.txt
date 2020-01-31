@@ -1,0 +1,240 @@
+*******************************************************************************
+*                AWS Certified Solution Architect - Associate                 *
+*                                    Notes                                    *
+*******************************************************************************
+
+    - Region is publicly location in the world
+    - AZ (availability zone) - one or more discrete DCs witch with redundant
+      power; networking / connectivity ... etc.
+
+    - Edge location - endpoints for AWS which are used for caching
+      content.Typically this consist of CloudFront , Amazon CDN (Content
+      Delivery Network)
+
+*******************************************************************************
+*                  Section 3: IAM Identity Access Management                  *
+*******************************************************************************
+ IAM allows you to manage users and their rights to the AWS Console
+    - centralised control
+    - shared access to your AWS account
+    - granular permission
+    - identity federation (AD/facebook/linkedin...)
+    - multifactor auth
+    - provide temporary access
+    - password rotation policy
+    - integrates with many AWS services
+    - PCI DSS Compliance
+
+ Terminology
+    - Users
+    - Groups
+    - Plicies   - json files with permissions for user/groups
+    - Roles     - create rolea and assign it to AWS resources
+
+
+****************
+*  8. IAM Lab  *
+****************
+    - create user group via gui 
+    - create S3_Admin_access Role and assign it to the user
+    - create MFA with Auth app
+
+    - IAM is universal
+
+*******************************
+*  9. Create a Billing Alarm  *
+*******************************
+ Console > CloudWatch > Billing 
+ 
+
+
+*************************************
+*  10. S3 (Simple Storage Service)  *
+*************************************
+ S3 - secure, durable, highly-scalable Object based storage 
+
+ - S3 data is spread across multiple devices and facilities.
+ - object based
+ - files can be between 0 and 5T
+ - unlimited storage
+ - files are stored in buckets
+ - S3 is universal namespace (bucket names must be unique globally)
+ - Example of S3: https://s3-eu-west-1.amazonaws.com/<bucket_name>
+ - when you upload a file to s3 successful your HTTP response code will be 200
+
+ S3 Objects is consist of the following:
+    - key       - name of the object
+    - value     - data 
+    - versionID - important for versioning 
+    - metadata  - "data about data" ;)
+    - sub resources:
+        - ACL (access control list)
+        - Torrents 
+
+ Data Consistency Model for S3
+    - Read after Write for PUTS of new objects
+    - Eventual Consistency for overwrite PUTS and DELETES (can take some time
+      to propagate ) 
+
+ S3 Guarantees:
+    - build for 99.99$ Availability
+    - Amazon guarantees 99.9% availability
+    - Amazon guarantees 99.999999999% durability (11x9)
+
+ S3 Futures:
+    - Tiered Storage Available
+    - Lifecycle Management
+    - Versioning
+    - Encrypt 
+    - MFA to Delete an object
+    - ACL 
+
+ S3 Classes:
+    - S3 standard (99.99% availability / 11x9 - durability). Designed to
+      sustain the loss of 2 facilities concurrently
+    - S3-IA (infrequently access) - lower fee than S3 but you are charged a
+      retrieval fee.
+    - S3 One Zone IA (formally known as RRS - reduce redundancy storage ) -for
+      infrequently accessed data but you don't want multiple availability zones
+      data resilience
+    - S3 Intelligent Tiering - Designed to optimize costs by automatically to
+      the most cost effective access tier without operational/performance
+      impact (used for ML)
+    - S3 Glacier - for data archiving. reliably store any data at costs that
+      are competitive with or cheaper that on-premises solutions. Retrieval
+      times configurable from minutes to hous
+    - S3 Glacier Deep Archive - lowest cost storage class with retrieval times
+      more than 12 hours
+
+ S3 Charges:
+    - per Storage
+    - per Request
+    - Storage management pricing 
+    - Data Transfer Pricing
+    - Transfer Acceleration
+    - Cross Region Replication Pricing
+
+NOTE: S3 is Not suitable for installing operating system or db :)) !!
+
+
+
+*******************************
+*  11. Let's Create S3 - Lab  *
+*******************************
+
+************************************
+*  12. S3 Security and Encryption  *
+************************************
+ By default all s3 buckets are Private. You can control access to s3 by
+setting:
+    - Bucket Policies
+    - ACL
+ Encryption in transit is secured by SSL/TLS protocols.
+ Encryption at Rest (server side) is achieved by:
+    - S3 Management Keys - SSE-S3 (service side encryption - s3)
+    - AWS key management service - SSE-KMS
+    - Server side encryption with customer provided keys - SSE-C 
+ Client side encryption 
+    - encrypt your file/object before upload it on s3
+
+***********************
+*  13. S3 Versioning  *
+***********************
+ - great backup tool
+ - once enabled, versioning can't be disable only suspended
+ - integrates with lifecycle rules
+ - you can use MFA in order to Delete in a secure way.
+
+******************************************
+*  14. S3 Lifecycle Management - S3 Lab  *
+******************************************
+Create Lifecycle Rule with gui:
+ S3 > bucket_name > Management > Lifecycle
+
+With Lifecycle rules you can:
+ - automates moving your storage to different storage tiers.
+ - can be used in conjunction in versioning
+ - can be applied to current version and previous versiosns
+
+**********************************
+*  15. Cross Region Replication  *
+**********************************
+Create replication:
+ S3 > bucket_name > Management > Replication
+
+ - CRR requires bucket versioning
+ - regions must be unique
+ - files in the existing bucket is not auto replicated, new ones does.
+ - all subsequent updated files will be replicated automatically
+ - if you delete one file in the bucket the Replicated one is not deleted
+   (delete markers are not replicated)
+ - deleting individual versions or markers will not be replicated
+
+**********************************
+*  16. S3 Transfer Acceleration  *
+**********************************
+
+ - utilize CloudFront (AWS CDN) to accelerate your uploads to s3
+ - check your speed to CloudFront to different regions with:
+http://s3-accelerate-speedtest.s3-accelerate.amazonaws.com/en/accelerate-speed-comparsion.html
+
+*****************************
+*  17. CloudFront Overview  *
+*****************************
+ AWS CDN (content delivery network) - distributed cache 
+
+CloudFront - key terminology:
+ - Edge Location - location that cache will be stored. This is separate to an
+   AWS Region/AZ. You can use Edge Location to write it too!!!
+ - Origin - origin of all objects stored in the CDN. They can be stored at: S3,
+   bucket, EC2 Instance, Elastic Load Balancer or Route 53
+ - Distribution - the name given the CDN which consist of a collection of Edge
+   Locations
+ - Web Distribution - used for websites
+ - RTMP - used for media streaming
+ - Objects are cached for a given time (TTL)
+
+******************
+*  19. Snowball  *
+******************
+ A petabyte-scale data transport solution.
+ - 50TB and 80TB variants. It has 256-AES cryptography enabled
+ - Snowball Edge is 100TB  data transfer device with onboard storage and
+   compute capabilities.
+ - Snowmobile - up to 100PB shipping container.
+
+NOTE: Snowball can Import/Export from/to S3
+
+
+*************************
+*  21. Storage Gateway  *
+*************************
+ AWS Storage Gateway connects on-premises software appliances with cloud based
+storage.
+    - AWS SG can be installed on Vmware or Hyper-V in your DC
+    - After activation you can use it from AWS Management Console
+
+ Types of AWS Storage Gateway:
+    - File Gateway      - NFS & SMB
+    - Volume Gateway    - iSCSI
+        - Stored volumes - store data in your DC locally but async backup via
+          iSCSI to S3 in the form of Amazon Elastic Block Store (Amazon EBS)
+        - Cached volumes - store frequently used data in your Storage GW 
+    - Tape Gateway      - VTL
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
