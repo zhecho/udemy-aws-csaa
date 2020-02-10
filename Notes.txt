@@ -194,6 +194,9 @@ CloudFront - key terminology:
  - RTMP - used for media streaming
  - Objects are cached for a given time (TTL)
 
+Note: You can clear cache in the CloudFront but you'll be charged 
+
+
 ******************
 *  19. Snowball  *
 ******************
@@ -217,21 +220,154 @@ storage.
  Types of AWS Storage Gateway:
     - File Gateway      - NFS & SMB
     - Volume Gateway    - iSCSI
-        - Stored volumes - store data in your DC locally but async backup via
-          iSCSI to S3 in the form of Amazon Elastic Block Store (Amazon EBS)
+        - Stored volumes - store entire data in your DC locally but async
+          backup via iSCSI to S3 in the form of Amazon Elastic Block Store
+          (Amazon EBS)
         - Cached volumes - store frequently used data in your Storage GW 
-    - Tape Gateway      - VTL
+    - Tape Gateway      - VTL (Virtual Tape Library )
+
+
+******************
+*  23. S3 & IAM  *
+******************
+
+Note: Read FAQ for S3 before exam :)
+
+
+*************
+*  Quiz 2   *
+*************
+Question 6: "In what language are policy document written ?" :))))
+                - python
+                - json          <--- :)))) program language ?
+                - node.js
+                - java
+
+
+ question 19: 
+    You run a meme creation website where users can create memes and
+then download them for use on their own sites. The original images are stored
+in S3 and each meme's metadata in DynamoDB. You need to decide upon a low-cost
+storage option for the memes, themselves. If a meme object is unavailable or
+lost, a Lambda function will automatically recreate it using the original file
+from S3 and the metadata from DynamoDB. Which storage solution should you use
+to store the non-critical, easily reproducible memes in the most cost-effective
+way?
+    - s3
+    - s3 IA
+    - s3 One zone IA <--
+    - s3 RRS
+    - glacier
+
+S3 – OneZone-IA is the recommended storage for when you want cheaper storage
+for infrequently accessed objects. It has the same durability but less
+availability. There can be cost implications if you use it frequently or use it
+for short lived storage. Glacier is cheaper, but has a long retrieval time. RRS
+has effectively been deprecated. It still exists but is not a service that AWS
+want to sell anymore.
 
 
 
+Question 25:
+ What is the availability of S3 – OneZone-IA?
+    - 99.90%
+    - 99.50% <--- it may be less than S3 or S3-IA ....
+    - 99.99%
+    - 100%
 
+Question 26:
 
-
-
-
-
-
+One of your users is trying to upload a 7.5GB file to S3. However, they keep
+getting the following error message: "Your proposed upload exceeds the maximum
+allowed object size.". What solution to this problem does AWS recommend?
  
+    - design your app to use multipart upload api for all objects
+
+Question 29:
+
+You work for a major news network in Europe. They have just released a new
+mobile app that allows users to post their photos of newsworthy events in
+real-time, which are then reviewed by your editors before being copied to your
+website and made public. Your organization expects this app to grow very
+quickly, essentially doubling its user base each month. The app uses S3 to
+store the images, and you are expecting sudden and sizable increases in traffic
+to S3 when a major news event takes place (as users will be uploading large
+amounts of content.) You need to keep your storage costs to a minimum, and it
+does not matter if some objects are lost. With these factors in mind, which
+storage media should you use to keep costs as low as possible?
+
+    - S3 - infrequently accessed storage
+    - S3 - One Zone infrequent Access       <---- the answer
+    - S3 - Reduced Redundancy Storage
+    - Glacier
+    - S3 - Provisioned IOPS
+
+Explanation Question 29:
+
+The key driver here is cost, so an awareness of cost is necessary to answer
+this. Full S3 is quite expensive at around $0.023 per GB for the lowest band.
+S3 standard IA is $0.0125 per GB, S3 One-Zone-IA is $0.01 per GB, and Legacy
+S3-RRS is around $0.024 per GB for the lowest band. Of the offered solutions
+SS3 One-Zone-IA is the cheapest suitable option. Glacier cannot be considered
+as it is not intended for direct access, however it comes in at around $0.004
+per GB. Of course you spotted that RRS is being deprecated, and there is no
+such thing as S3 – Provisioned IOPS. In this case OneZone
+
+
+Question 30:
+
+How many S3 buckets can I have per account by default?
+    - 10
+    - 20
+    - 30
+    - 50
+    - 100   <--- the answer
+
+
+Question 31:
+
+You work for a busy digital marketing company who currently store their data
+on-premise. They are looking to migrate to AWS S3 and to store their data in
+buckets. Each bucket will be named after their individual customers, followed
+by a random series of letters and numbers. Once written to S3 the data is
+rarely changed, as it has already been sent to the end customer for them to use
+as they see fit. However, on some occasions, customers may need certain files
+updated quickly, and this may be for work that has been done months or even
+years ago. You would need to be able to access this data immediately to make
+changes in that case, but you must also keep your storage costs extremely low.
+The data is not easily reproducible if lost. Which S3 storage class should you
+choose to minimize costs and to maximize retrieval times?
+
+    - S3
+    - S3-IA         <--- answer
+    - S3-1Zone-IA
+    - Glacier
+
+
+*******************************************************************************
+*                Section 4: EC2 (Amazon Elastic Compute Cloud)                *
+*******************************************************************************
+https://d0.awsstatic.com/witepapers/aws_pricing_overview.pdf
+
+EC2 Price Models
+    - on demand - allows you to pay per hour/second with no long term
+      commitment
+    - reserved  - provides you with a capacity reservation and offer
+      significant discount for instance per hour. Contract Terms are 1 or 3
+      years
+    - spot  - enables you to bid whatever price you want for instance capacity
+      providing even great savings if you application have flexible start and
+      end times.
+    - dedicate hosts - physical dedicated server for your use. It can help you
+      reduce costs by allowing you to use your existing server-bound soft
+      licences 
+
+
+
+
+
+
+
 
 
 
